@@ -1,7 +1,7 @@
 ## Contents
 - [Description](#description)
 - [Architecture](#architecture)
-- [Node Details](#node-details)
+- [Topics](#topics)
 - [User Stories & Acceptance Criteria](#user-stories--acceptance-criteria)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -41,7 +41,7 @@ graph LR
 | `/odom`                       | `nav_msgs/Odometry`         | Provides the shuttle’s real-time position and orientation within the map. |
 | `/goal`                       | `geometry_msgs/PoseStamped` | Receives the destination goal (pickup/drop-off or parking location). |
 | `/map`                        | `nav_msgs/OccupancyGrid`    | Provides the static map of the environment, including obstacles. |
-| `/decision_unit`              | `std_msgs/Bool`             | Receives a signal from the decision unit (boolean) to start path planning. |
+| `/decision_unit`              | `std_msgs/UInt8`             | Receives a signal from the decision unit (boolean) to start path planning. |
 | `/parking_coordinates`        | `geometry_msgs/PoseStamped` | Receives the parking spot coordinates to plan the path towards the parking area. |
 
 ##### Output
