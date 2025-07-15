@@ -11,15 +11,16 @@
 The Path Planning Component is responsible for computing safe, optimal, and obstacle-free routes for the shuttle. It uses real-time data, including static maps of the environment, shuttle's current position (via odometry), and dynamic obstacle detection, to generate a series of waypoints that guide the shuttle from the pickup location to the drop-off point (e.g., supermarket)
 
 ## Architecture
+
 ```mermaid
 graph LR
-    Odom["/odom<br/>(nav_msgs/Odometry)"] --> PathPlanning["Path Planning Component"]
-    Goal["/goal<br/>(geometry_msgs/PoseStamped)"] --> PathPlanning
-    Map["/static_map<br/>(nav_msgs/OccupancyGrid)"] --> PathPlanning
-    Decision["/decision_unit<br/>(std_msgs/Bool)"] --> PathPlanning
-    Parking["/parking_coordinates<br/>(geometry_msgs/PoseStamped)"] --> PathPlanning
+    Odom["/odom"] -->|"(nav_msgs/Odometry)"| PathPlanning["Path Planning Component"]
+    Goal["/goal"] -->|"(goalPoints)"| PathPlanning
+    Map["/static_map"] -->|"(nav_msgs/OccupancyGrid)"| PathPlanning
+    Decision["/vehicle_state"] -->|"(std_msgs/UInt8)"| PathPlanning
+    Parking["/parking_coordinates"] -->|"(geometry_msgs/PoseStamped)"| PathPlanning
 
-    PathPlanning --> PathData["/path_data<br/>(nav_msgs/Path)"]
+    PathPlanning -->|"(nav_msgs/Path)"| PathData["/path_data"]
 
     %% Styling
     class PathPlanning yellowRounded;
@@ -29,7 +30,6 @@ graph LR
     classDef yellowRounded fill:#ffcc00,stroke:#333333,stroke-width:2px,rx:20,ry:20,color:#000000,font-size:12px,text-align:center;
     classDef graySquare fill:#cccccc,stroke:#333333,stroke-width:1px,rx:0,ry:0,color:#000000,font-size:12px,text-align:center;
 ```
-
 ## Node Details
 ### Node: `path_planner_node`
 This node is responsible for computing a safe and optimal path from the shuttle's current position to the destination (either the parking spot, pickup, or drop-off point).
@@ -37,19 +37,19 @@ This node is responsible for computing a safe and optimal path from the shuttle'
 #### Topics & Services
 ##### Inputs
 
-| Name                         | IO      | Type                      | Description                                                              |
-|------------------------------|---------|---------------------------|--------------------------------------------------------------------------|
-| `/odom`                       | Input   | `nav_msgs/Odometry`         | Provides the shuttle’s real-time position and orientation within the map. |
-| `/goal`                       | Input   | `geometry_msgs/PoseStamped` | Receives the destination goal (pickup/drop-off or parking location). |
-| `/map`                        | Input   | `nav_msgs/OccupancyGrid`    | Provides the static map of the environment, including obstacles. |
-| `/decision_unit`              | Input   | `std_msgs/Bool`             | Receives a signal from the decision unit (boolean) to start path planning. |
-| `/parking_coordinates`        | Input   | `geometry_msgs/PoseStamped` | Receives the parking spot coordinates to plan the path towards the parking area. |
+| Name                         | Type                      | Description                                                              |
+|------------------------------|---------------------------|--------------------------------------------------------------------------|
+| `/odom`                       | `nav_msgs/Odometry`         | Provides the shuttle’s real-time position and orientation within the map. |
+| `/goal`                       | `geometry_msgs/PoseStamped` | Receives the destination goal (pickup/drop-off or parking location). |
+| `/map`                        | `nav_msgs/OccupancyGrid`    | Provides the static map of the environment, including obstacles. |
+| `/decision_unit`              | `std_msgs/Bool`             | Receives a signal from the decision unit (boolean) to start path planning. |
+| `/parking_coordinates`        | `geometry_msgs/PoseStamped` | Receives the parking spot coordinates to plan the path towards the parking area. |
 
 ##### Output
 
-| Name                         | IO      | Type                      | Description                                                              |
-|------------------------------|---------|---------------------------|--------------------------------------------------------------------------|
-| `/path_data`                 | Output  | `nav_msgs/Path`           | Publishes the computed path as a sequence of waypoints to be followed by the shuttle. |
+| Name                         | Type                      | Description                                                              |
+|------------------------------|---------------------------|--------------------------------------------------------------------------|
+| `/path_data`                 | `nav_msgs/Path`           | Publishes the computed path as a sequence of waypoints to be followed by the shuttle. |
 
 
 ## User Stories & Acceptance Criteria
