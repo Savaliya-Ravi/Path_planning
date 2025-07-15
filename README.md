@@ -8,10 +8,10 @@
 - [License](#license)
  
 ## Description
-The Path Planning Component plays a crucial role in autonomous shuttle by generating safe, efficient, and obstacle-free paths between current location to user designated destinations.
-It receives the shuttle’s current position and orientation via the `/odom` topic (`nav_msgs/Odometry`), enabling accurate localization on the map. The `/map` topic (`nav_msgs/OccupancyGrid`) provides a static environmental layout. To determine where the shuttle needs to navigate, it listens to the `/goal` topic (`goalPoints`), which contains the target destination—either a pickup or drop-off point.
-Additionally, the component listens to `/decision_unit` (`std_msgs/Bool`) that acts as a signal to initiate path computation. After deboarding shuttle has to park itself until user complete its shoping, for that it subscribes to `/parking_coordinates` (`geometry_msgs/PoseStamped`).
-After integrating all these inputs, the component publishes a route through the `/path_data` topic (`nav_msgs/Path`), containing a series of waypoints. This path can then be executed by the path execution controller component.
+-The Path Planning Component plays a crucial role in autonomous shuttle by generating safe, efficient, and obstacle-free paths between current location to user designated destinations.
+-It receives the shuttle’s current position and orientation via the `/odom` topic (`nav_msgs/Odometry`), enabling accurate localization on the map. The `/map` topic (`nav_msgs/OccupancyGrid`) provides a static environmental layout. To determine where the shuttle needs to navigate, it listens to the `/goal` topic (`goalPoints`), which contains the target destination—either a pickup or drop-off point.
+-Additionally, the component listens to `/decision_unit` (`std_msgs/Bool`) that acts as a signal to initiate path computation. After deboarding shuttle has to park itself until user complete its shoping, for that it subscribes to `/parking_coordinates` (`geometry_msgs/PoseStamped`).
+-After integrating all these inputs, the component publishes a route through the `/path_data` topic (`nav_msgs/Path`), containing a series of waypoints. This path can then be executed by the path execution controller component.
 
 ## Architecture
 
