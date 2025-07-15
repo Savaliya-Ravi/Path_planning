@@ -8,7 +8,10 @@
 - [License](#license)
  
 ## Description
-The Path Planning Component is responsible for computing safe, optimal, and obstacle-free routes for the shuttle. It uses real-time data, including static maps of the environment, shuttle's current position (via odometry), and dynamic obstacle detection, to generate a series of waypoints that guide the shuttle from the pickup location to the drop-off point (e.g., supermarket)
+The Path Planning Component plays a crucial role in autonomous shuttle by generating safe, efficient, and obstacle-free paths between current location to user designated destinations.
+It receives the shuttle’s current position and orientation via the `/odom` topic (`nav_msgs/Odometry`), enabling accurate localization on the map. The `/map` topic (`nav_msgs/OccupancyGrid`) provides a static environmental layout. To determine where the shuttle needs to navigate, it listens to the `/goal` topic (`goalPoints`), which contains the target destination—either a pickup or drop-off point.
+Additionally, the component listens to `/decision_unit` (`std_msgs/Bool`) that acts as a signal to initiate path computation. After deboarding shuttle has to park itself until user complete its shoping, for that it subscribes to `/parking_coordinates` (`geometry_msgs/PoseStamped`).
+After integrating all these inputs, the component publishes a route through the `/path_data` topic (`nav_msgs/Path`), containing a series of waypoints. This path can then be executed by the path execution controller component.
 
 ## Architecture
 
@@ -30,15 +33,11 @@ graph LR
     classDef yellowRounded fill:#ffcc00,stroke:#333333,stroke-width:2px,rx:20,ry:20,color:#000000,font-size:12px,text-align:center;
     classDef graySquare fill:#cccccc,stroke:#333333,stroke-width:1px,rx:0,ry:0,color:#000000,font-size:12px,text-align:center;
 ```
-## Node Details
-### Node: `path_planner_node`
-This node is responsible for computing a safe and optimal path from the shuttle's current position to the destination (either the parking spot, pickup, or drop-off point).
-
-#### Topics & Services
+##  Topics
 ##### Inputs
 
-| Name                         | Type                      | Description                                                              |
-|------------------------------|---------------------------|--------------------------------------------------------------------------|
+| Name                          | Type                      | Description                                                              |
+|-------------------------------|---------------------------|--------------------------------------------------------------------------|
 | `/odom`                       | `nav_msgs/Odometry`         | Provides the shuttle’s real-time position and orientation within the map. |
 | `/goal`                       | `geometry_msgs/PoseStamped` | Receives the destination goal (pickup/drop-off or parking location). |
 | `/map`                        | `nav_msgs/OccupancyGrid`    | Provides the static map of the environment, including obstacles. |
