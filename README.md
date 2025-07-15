@@ -8,10 +8,13 @@
 - [License](#license)
  
 ## Description
--The Path Planning Component plays a crucial role in autonomous shuttle by generating safe, efficient, and obstacle-free paths between current location to user designated destinations.
--It receives the shuttle’s current position and orientation via the `/odom` topic (`nav_msgs/Odometry`), enabling accurate localization on the map. The `/map` topic (`nav_msgs/OccupancyGrid`) provides a static environmental layout. To determine where the shuttle needs to navigate, it listens to the `/goal` topic (`goalPoints`), which contains the target destination—either a pickup or drop-off point.
--Additionally, the component listens to `/decision_unit` (`std_msgs/Bool`) that acts as a signal to initiate path computation. After deboarding shuttle has to park itself until user complete its shoping, for that it subscribes to `/parking_coordinates` (`geometry_msgs/PoseStamped`).
--After integrating all these inputs, the component publishes a route through the `/path_data` topic (`nav_msgs/Path`), containing a series of waypoints. This path can then be executed by the path execution controller component.
+The **Path Planning Component** plays a crucial role in the autonomous shuttle system by generating safe, efficient, and obstacle-free paths from the shuttle’s current location to user-designated destinations. These destinations may include pickup points, drop-off locations, or parking zones, depending on the phase of the ride.
+
+To accurately determine the shuttle’s location on the map, the component receives real-time position and orientation data through the `/odom` topic (`nav_msgs/Odometry`). It also subscribes to the `/map` topic (`nav_msgs/OccupancyGrid`), which provides a static map of the environment, including obstacles and drivable areas. The destination goal is received via the `/goal` topic (`goalPoints`), which contains either the pickup or drop-off coordinates as defined by the user.
+
+In addition, the component listens to the `/decision_unit` topic (`std_msgs/Bool`), which acts as a trigger to initiate the path planning process. After a user has been dropped off at their destination, the shuttle needs to park while the user completes shopping. For this purpose, it also subscribes to the `/parking_coordinates` topic (`geometry_msgs/PoseStamped`) to receive the most suitable nearby parking location.
+
+Once all necessary inputs are processed, the component publishes the final planned route to the `/path_data` topic (`nav_msgs/Path`). This route consists of a sequence of waypoints that can be followed by the shuttle’s path execution controller to ensure smooth and safe navigation.
 
 ## Architecture
 
