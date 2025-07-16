@@ -1,20 +1,19 @@
 ## Contents
 - [Description](#description)
 - [Architecture](#architecture)
-- [Topics](#topics)
-- [User Stories & Acceptance Criteria](#user-stories--acceptance-criteria)
 - [Installation](#installation)
 - [Usage](#usage)
-- [License](#license)
+- [Contributor](#contributor)
  
 ## Description
-The **Path Planning Component** plays a crucial role in the autonomous shuttle system by generating safe, efficient, and obstacle-free paths from the shuttle’s current location to user-designated destinations. These destinations may include pickup points, drop-off locations, or parking zones, depending on the phase of the ride.
 
-To accurately determine the shuttle’s location on the map, the component receives real-time position and orientation data through the `/odom` topic (`nav_msgs/Odometry`). It also subscribes to the `/map` topic (`nav_msgs/OccupancyGrid`), which provides a static map of the environment, including obstacles and drivable areas. The destination goal is received via the `/goal` topic (`goalPoints`), which contains either the pickup or drop-off coordinates as defined by the user.
+The Path Planning Component is an essential part of the autonomous shuttle system since it will produce secure, optimum, and obstacle-free path between the current location of the shuttle and the destinations specified by its users. These destinations can comprised of pick up points and drop off location.
 
-In addition, the component listens to the `/decision_unit` topic (`std_msgs/Bool`), which acts as a trigger to initiate the path planning process. After a user has been dropped off at their destination, the shuttle needs to park while the user completes shopping. For this purpose, it also subscribes to the `/parking_coordinates` topic (`geometry_msgs/PoseStamped`) to receive the most suitable nearby parking location.
+To provide correct information on the location of the shuttle on the map, the component gets the real position and orientation using the topic `/odom` (`nav_msgs/Odometry`). It also subscribes to the `/static_map` topic (`nav_msgs/OccupancyGrid`), which is the static map of the environment including obstacles and places where it can drive. Its destination goal is received under `/goal` topic (`goalPoints`) that contains pick up or drop off coordinates as formulated by the user.
 
-Once all necessary inputs are processed, the component publishes the final planned route to the `/path_data` topic (`nav_msgs/Path`). This route consists of a sequence of waypoints that can be followed by the shuttle’s path execution controller to ensure smooth and safe navigation.
+Further the component subscribes to `/vehicle_state` (`std_msgs/UInt8`) message, which serves as a starting point to the path planning process. Once a user has reached his destination, the shuttle must park as a user may have to shop. At that, to obtain the most appropriate near parking location, it subscribes to the `/parking_coordinates` topic (`geometry_msgs/PoseStamped`).
+
+Playing all the required inputs, the component will publish the ready scheduled path to the `/path_data` topic (`nav_msgs/Path`). The path of this route is composed of the series of the waypoints, which can be tracked by the path execution controller.
 
 ## Architecture
 
@@ -43,8 +42,8 @@ graph LR
 |-------------------------------|---------------------------|--------------------------------------------------------------------------|
 | `/odom`                       | `nav_msgs/Odometry`         | Provides the shuttle’s real-time position and orientation within the map. |
 | `/goal`                       | `geometry_msgs/PoseStamped` | Receives the destination goal (pickup/drop-off or parking location). |
-| `/map`                        | `nav_msgs/OccupancyGrid`    | Provides the static map of the environment, including obstacles. |
-| `/decision_unit`              | `std_msgs/UInt8`             | Receives a signal from the decision unit (boolean) to start path planning. |
+| `/static_map`                 | `nav_msgs/OccupancyGrid`    | Provides the static map of the environment, including obstacles. |
+| `/vehicle_state`              | `std_msgs/UInt8`             | Receives a signal from the decision unit (boolean) to start path planning. |
 | `/parking_coordinates`        | `geometry_msgs/PoseStamped` | Receives the parking spot coordinates to plan the path towards the parking area. |
 
 ##### Output
@@ -54,7 +53,7 @@ graph LR
 | `/path_data`                 | `nav_msgs/Path`           | Publishes the computed path as a sequence of waypoints to be followed by the shuttle. |
 
 
-## User Stories & Acceptance Criteria
+<!-- ### ## User Stories & Acceptance Criteria
 ### User Story 1: Path Calculation from Start to Goal
 **User Story 1.1**  
 As a **Path Planning Component**, I want to dynamically calculate and adjust the shuttle's route based on its current position, destination, so that the shuttle can follow an optimal, and safe path to reach its destination, including parking and re-routing.
@@ -65,7 +64,7 @@ As a **Path Planning Component**, I want to dynamically calculate and adjust the
 
 
 
-<!-- ### User Story 2: Dynamic Re-routing for Obstacle Avoidance
+ User Story 2: Dynamic Re-routing for Obstacle Avoidance
 **User Story 2.1**  
 As a **Path Planning Component**, I want to dynamically re-calculate the path when the **Decision Unit** informs me of the need to re-plan the path due to a detected obstacle, so that the shuttle can avoid collisions and continue safely to its destination.
 
@@ -98,8 +97,5 @@ ros2 run xx xx
  
 ## Contributor
 [Ravikumar Shivlal Savaliya](https://git.hs-coburg.de/ravisavaliya)
- 
-## License
-Licensed under the **Apache 2.0 License**. See [LICENSE](LICENSE) for details.
  
  
