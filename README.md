@@ -1,25 +1,35 @@
-## Contents
-- [Description](#description)
-- [Architecture](#architecture)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributor](#contributor)
- 
-## Description
+[Ravikumar Shivlal Savaliya](https://git.hs-coburg.de/ravisavaliya) : Path Planning Node
 
-The Path Planning Component is an essential part of the autonomous shuttle system since it will produce secure, optimum, and obstacle-free path between the current location of the shuttle and the destinations specified by its users. These destinations can comprised of pick up points and drop off location.
 
-To provide correct information on the location of the shuttle on the map, the component gets the real position and orientation using the topic `/odom` (`nav_msgs/Odometry`). It also subscribes to the `/static_map` topic (`nav_msgs/OccupancyGrid`), which is the static map of the environment including obstacles and places where it can drive. Its destination goal is received under `/goal` topic (`goalPoints`) that contains pick up or drop off coordinates as formulated by the user.
+## 📌 Table of Contents
+- [📖 Overview](#-overview)
+- [🏗️ Component Architecture](#-component-architecture)
+- [🔌 ROS 2 Topics](#-ros-2-topics)
+- [⚙️ Component Functionality](#️-component-functionality)
+- [📥 Installation & Setup](#-installation--setup)
 
-Further the component subscribes to `/vehicle_state` (`std_msgs/UInt8`) message, which serves as a starting point to the path planning process. Once a user has reached his destination, the shuttle must park as a user may have to shop. At that, to obtain the most appropriate near parking location, it subscribes to the `/parking_coordinates` topic (`geometry_msgs/PoseStamped`).
+---
 
-Playing all the required inputs, the component will publish the ready scheduled path to the `/path_data` topic (`nav_msgs/Path`). The path of this route is composed of the series of the waypoints, which can be tracked by the path execution controller.
+## 📖 Overview
 
-## Architecture
+The **Path Planning Node** plays a central role in ensuring that the autonomous shuttle reaches its destination safely and efficiently. It calculates the route from the shuttle's current position to destinations like pickup points, drop-off points, or parking spots.
+
+To achieve this, it uses:
+- **Position and orientation** data from `/odom`.
+- **Environmental map** from `/static_map`.
+- **Pick-up and drop-off destination** via `/goal`.
+- **Vehicle state signal** from `/vehicle_state`.
+- **Parking location** from `/parking_coordinates`.
+
+Based on this, it generates a sequence of waypoints and publishes them on `/path_data`, which can then be followed by a controller node.
+
+---
+
+## 🏗️ Component Architecture
 
 ```mermaid
 graph LR
-    Odom["/odom"] -->|"(nav_msgs/Odometry)"| PathPlanning["Path Planning Component"]
+    Odom["/odom"] -->|"(nav_msgs/Odometry)"| PathPlanning["Path Planning Node"]
     Goal["/goal"] -->|"(goalPoints)"| PathPlanning
     Map["/static_map"] -->|"(nav_msgs/OccupancyGrid)"| PathPlanning
     Decision["/vehicle_state"] -->|"(std_msgs/UInt8)"| PathPlanning
@@ -35,67 +45,104 @@ graph LR
     classDef yellowRounded fill:#ffcc00,stroke:#333333,stroke-width:2px,rx:20,ry:20,color:#000000,font-size:12px,text-align:center;
     classDef graySquare fill:#cccccc,stroke:#333333,stroke-width:1px,rx:0,ry:0,color:#000000,font-size:12px,text-align:center;
 ```
-##  Topics
-##### Inputs
 
-| Name                          | Type                      | Description                                                              |
-|-------------------------------|---------------------------|--------------------------------------------------------------------------|
-| `/odom`                       | `nav_msgs/Odometry`         | Provides the shuttle’s real-time position and orientation within the map. |
-| `/goal`                       | `geometry_msgs/PoseStamped` | Receives the destination goal (pickup/drop-off or parking location). |
-| `/static_map`                 | `nav_msgs/OccupancyGrid`    | Provides the static map of the environment, including obstacles. |
-| `/vehicle_state`              | `std_msgs/UInt8`             | Receives a signal from the decision unit (boolean) to start path planning. |
-| `/parking_coordinates`        | `geometry_msgs/PoseStamped` | Receives the parking spot coordinates to plan the path towards the parking area. |
+## 🔌 ROS 2 Topics
 
-##### Output
-
-| Name                         | Type                      | Description                                                              |
-|------------------------------|---------------------------|--------------------------------------------------------------------------|
-| `/path_data`                 | `nav_msgs/Path`           | Publishes the computed path as a sequence of waypoints to be followed by the shuttle. |
-
-
-<!-- ### ## User Stories & Acceptance Criteria
-### User Story 1: Path Calculation from Start to Goal
-**User Story 1.1**  
-As a **Path Planning Component**, I want to dynamically calculate and adjust the shuttle's route based on its current position, destination, so that the shuttle can follow an optimal, and safe path to reach its destination, including parking and re-routing.
-**Acceptance Criteria**  
-- **1.1.1**  The system should calculate an initial valid path from the shuttle's current position (based on odometry) to the destination (either a pickup, drop-off, or parking spot), ensuring that it follows safe and efficient routes.
-- **1.1.2** The system should publish a valid **`/path_data`** message representing the planned path to the destination.
-- **1.1.3** The system should incorporate dynamic re-routing, allowing the shuttle to adjust its path if an obstacle is detected by the Environmental Model or Decision Unit and send a re-routing request to the Path Planning Component.
+| IN/Out | Topic Name             | Message Type                | Description                                                     |
+|--------|------------------------|-----------------------------|-----------------------------------------------------------------|
+| Input  | `/odom`                | `nav_msgs/Odometry`         | Current pose and orientation of the shuttle.                    |
+| Input  | `/goal`                | `goalPoints`                | Custom message with pickup/drop-off coordinates.                |
+| Input  | `/static_map`          | `nav_msgs/OccupancyGrid`    | Static map used for collision avoidance and routing.            |
+| Input  | `/vehicle_state`       | `std_msgs/UInt8`            | Trigger signal from decision unit to start path planning.       |
+| Input  | `/parking_coordinates` | `geometry_msgs/PoseStamped` | Nearest available parking spot to plan toward.                  |
+| Output | `/path_data`           | `nav_msgs/Path`             | Computed path as a list of waypoints for the controller to use. |
 
 
 
- User Story 2: Dynamic Re-routing for Obstacle Avoidance
-**User Story 2.1**  
-As a **Path Planning Component**, I want to dynamically re-calculate the path when the **Decision Unit** informs me of the need to re-plan the path due to a detected obstacle, so that the shuttle can avoid collisions and continue safely to its destination.
+## ⚙️ Component Functionality
 
-**Acceptance Criteria**  
-- **2.1.1** The **Environmental Model** detects obstacles and sends a **true/false signal** to the **Decision Unit** indicating whether an obstacle is detected.
-- **2.1.2** The **Decision Unit** sends a command to the **Path Planning Component** to re-plan the path when an obstacle is detected.
-- **2.1.3** Upon receiving the signal from the **Decision Unit**, the **Path Planning Component** invalidates the current path and recalculates a new one that avoids the detected obstacle.
-- **2.1.4** The updated path should be published to the **`/path_data`** topic, guiding the shuttle around the obstacle.
+The **Path Planning Node** only initiates path computation when it receives a specific trigger signal on the `/vehicle_state` topic, which typically comes from the decision unit. By doing so, the node avoids unnecessary computation and ensures efficient use of resources.
 
-### User Story 3: Path Planning for Parking
-**User Story 3.1**  
-As a **Path Planning Component**, I want to plan a route that allows the shuttle to reach the nearest available parking spot, so that the shuttle can park safely while waiting for the user to complete their shopping.
+Once triggered, the node begins by reading the shuttle's real-time pose and orientation from the `/odom` topic. At the same time, it listens to the `/goal` topic, which contains the destination coordinates (a pickup or drop-off point) specified by the user through the shuttle interface(HMI).
 
-**Acceptance Criteria**  
-- **3.1.1** The system should use the **`/parking_coordinates`** to calculate the path to the nearest available parking spot.
-- **3.1.2** The system should publish a valid path to the parking spot, guiding the shuttle safely into the parking area without collisions.
-- **3.1.3**  The system should dynamically adjust the path if the parking spot becomes unavailable or if there are new obstacles detected while approaching the parking spot. -->
+After shuttle reachs to the supermarket, it searches for the empty parking space in its surrounding and when it finds one, the sensor data fusion and filtering module publishes the `PoseStamped` messaege to the `/parking_coordinates` topic, and path planning node subscribes to it and caluculate efficient path to the parking. 
 
- 
-## Installation
+To ensure safety and feasibility, the node uses the static environment map from `/static_map`, which contains information about obstacles and wall. Using this occupancy grid, the path planner ensures that the generated path is safe for execution.
+
+Once the path is computed, it is published to the `/path_data` topic as a `nav_msgs/Path` message. This message consists of a sequence of waypoints that the path execution controller uses to guide the shuttle through the environment.
+
+
+## 📥 Installation & Setup
+
+### 🔧 Clone the repository
+
 ```bash
 git clone https://git.hs-coburg.de/voyagex/vx_path_planning.git
 ```
- 
-## Usage
-Run the node:
+
+##  Build the package
 ```bash
-ros2 run xx xx
+cd vx_path_planning
+colcon build
+source install/setup.bash
+
 ```
- 
-## Contributor
-[Ravikumar Shivlal Savaliya](https://git.hs-coburg.de/ravisavaliya)
- 
- 
+
+ ## Run the node
+```bash
+ros2 run vx_path_planning <node_executable_name>
+```
+
+ ## 🧪 Interface Test Procedure
+
+This section outlines how to verify that the **Path Planning Node** correctly subscribes to inputs and publishes the expected path output using ROS 2 topics.
+
+
+### 🔄 Step-by-Step Test Procedure
+
+1. **Launch the Node**
+   ```bash
+   ros2 run vx_path_planning <node_executable_name>
+   ```
+2. **Publish Odometry Input**
+   ```bash
+   ros2 topic pub /odom nav_msgs/Odometry '{pose: {pose: {position: {x: 0.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}}'
+   ```
+3. **Publish Goal Input**
+   ```bash
+   ros2 topic pub /goal goalPoints '{pickup: {header: {frame_id: "map"}, pose: {position: {x: 1.0, y: 1.0}, orientation: {w: 1.0}}}, droppoff: {header: {frame_id: "map"}, pose: {position: {x: 5.0, y: 5.0}, orientation: {w: 1.0}}}}'
+   ```
+4. **Publish Vehicle State**
+   ```bash
+   ros2 topic pub /vehicle_state std_msgs/UInt8 'data: 1'
+   ```
+5. **Publish Odometry Input**
+   ```bash
+   ros2 topic pub /static_map nav_msgs/OccupancyGrid "header:
+     frame_id: 'map'
+   info:
+     resolution: 0.1
+     width: 10
+     height: 10
+     origin:
+       position: {x: 0.0, y: 0.0, z: 0.0}
+       orientation: {w: 1.0}
+   data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 100, 100, 100, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+       ```
+6. **Publish Parking Coordinates**
+   ```bash
+   ros2 topic pub /parking_coordinates geometry_msgs/PoseStamped '{header: {frame_id: "map"}, pose: {position: {x: 2.0, y: 2.0}, orientation: {w: 1.0}}}'
+   ```
+7. **Verify Output Path**
+   ```bash
+   ros2 topic echo /path_data
+   ```
