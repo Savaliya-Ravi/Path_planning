@@ -93,7 +93,7 @@ source install/setup.bash
 
  ## Run the node
 ```bash
-ros2 run vx_path_planning <node_executable_name>
+ros2 run path_planner_node path_planner
 ```
 
  ## 🧪 Interface Test Procedure
@@ -105,8 +105,10 @@ This section outlines how to verify that the **Path Planning Node** correctly su
 
 1. **Launch the Node**
    ```bash
-   ros2 run vx_path_planning <node_executable_name>
+   ros2 run path_planner_node path_planner
    ```
+Now create dummy publisher by pasting this each in new terminal.
+
 2. **Publish Odometry Input**
    ```bash
    ros2 topic pub /odom nav_msgs/Odometry '{pose: {pose: {position: {x: 0.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}}'
