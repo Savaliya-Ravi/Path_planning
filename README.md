@@ -3,7 +3,7 @@
 
 ## 📌 Table of Contents
 - [Overview](#-overview)
-- [Component Architecture](#component-architecture)
+- [Component Architecture](#-component-architecture)
 - [ROS 2 Topics](#-ros-2-topics)
 - [Component Functionalities](#️-component-functionalities)
 - [Installation & Setup](#-installation--setup)
@@ -28,24 +28,8 @@ Based on this, it generates a sequence of waypoints and publishes them on `/path
 
 ## 🏗️ Component Architecture
 
-```mermaid
-graph LR
-    Odom["/odom"] -->|"(nav_msgs/Odometry)"| PathPlanning["Path Planning Node"]
-    Goal["/goal"] -->|"(goalPoints)"| PathPlanning
-    Map["/static_map"] -->|"(nav_msgs/OccupancyGrid)"| PathPlanning
-    Decision["/vehicle_state"] -->|"(std_msgs/UInt8)"| PathPlanning
-    Parking["/parking_coordinates"] -->|"(geometry_msgs/PoseStamped)"| PathPlanning
+![Path Planning](resource/path%20planning.png)
 
-    PathPlanning -->|"(nav_msgs/Path)"| PathData["/path_data"]
-
-    %% Styling
-    class PathPlanning yellowRounded;
-    class Odom,Goal,Map,Decision,Parking,PathData graySquare;
-
-    %% Class definitions
-    classDef yellowRounded fill:#ffcc00,stroke:#333333,stroke-width:2px,rx:20,ry:20,color:#000000,font-size:12px,text-align:center;
-    classDef graySquare fill:#cccccc,stroke:#333333,stroke-width:1px,rx:0,ry:0,color:#000000,font-size:12px,text-align:center;
-```
 
 ## 🔌 ROS 2 Topics
 
