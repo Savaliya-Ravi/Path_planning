@@ -7,6 +7,7 @@
 - [🔌 ROS 2 Topics](#-ros-2-topics)
 - [⚙️ Component Functionality](#️-component-functionality)
 - [📥 Installation & Setup](#-installation--setup)
+- [🧪 Interface Test Procedure](#-interface-test-procedure)
 
 ---
 
@@ -98,7 +99,7 @@ ros2 run vx_path_planning <node_executable_name>
 This section outlines how to verify that the **Path Planning Node** correctly subscribes to inputs and publishes the expected path output using ROS 2 topics.
 
 
-### 🔄 Step-by-Step Test Procedure
+### Step-by-Step Test Procedure
 
 1. **Launch the Node**
    ```bash
