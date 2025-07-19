@@ -58,6 +58,24 @@ graph LR
 | Input  | `/parking_coordinates` | `geometry_msgs/PoseStamped` | Nearest available parking spot to plan toward.                  |
 | Output | `/path_data`           | `nav_msgs/Path`             | Computed path as a list of waypoints for the controller to use. |
 
+### 📦 Custom Message Definition: `goalPoints`
+
+The `/goal` topic uses a custom message type named `goalPoints`, which includes both pickup and drop-off locations for the autonomous shuttle.
+
+```text
+goalPoints.msg
+------------------------
+geometry_msgs/PoseStamped pickup
+geometry_msgs/PoseStamped droppoff
+```
+
+### Field Description
+
+| Field Name | Type                        | Description                                         |
+| ---------- | --------------------------- | --------------------------------------------------- |
+| `pickup`   | `geometry_msgs/PoseStamped` | Location where the user wants to be picked up.      |
+| `droppoff` | `geometry_msgs/PoseStamped` | Destination location where the user is dropped off. |
+
 
 
 ## ⚙️ Component Functionality
