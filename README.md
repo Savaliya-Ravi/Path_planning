@@ -2,12 +2,12 @@
 
 
 ## 📌 Table of Contents
-- [📖 Overview](#-overview)
-- [🏗️ Component Architecture](#-component-architecture)
-- [🔌 ROS 2 Topics](#-ros-2-topics)
-- [⚙️ Component Functionality](#️-component-functionality)
-- [📥 Installation & Setup](#-installation--setup)
-- [🧪 Interface Test Procedure](#-interface-test-procedure)
+- [Overview](#-overview)
+- [Component Architecture](#component-architecture)
+- [ROS 2 Topics](#-ros-2-topics)
+- [Component Functionalities](#️-component-functionalities)
+- [Installation & Setup](#-installation--setup)
+- [Interface Test Procedure](#-interface-test-procedure)
 
 ---
 
@@ -78,7 +78,7 @@ geometry_msgs/PoseStamped droppoff
 
 
 
-## ⚙️ Component Functionality
+## ⚙️ Component Functionalities
 
 The **Path Planning Node** only initiates path computation when it receives a specific trigger signal on the `/vehicle_state` topic, which typically comes from the decision unit. By doing so, the node avoids unnecessary computation and ensures efficient use of resources.
 
