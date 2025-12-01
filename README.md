@@ -37,7 +37,6 @@ Based on this, it generates a sequence of waypoints and publishes them on `/path
 |--------|------------------------|-----------------------------|-----------------------------------------------------------------|
 | Input  | `/odom`                | `nav_msgs/Odometry`         | Current pose and orientation of the shuttle.                    |
 | Input  | `/goal`                | `goalPoints`                | Custom message with pickup/drop-off coordinates.                |
-| Input  | `/static_map`          | `nav_msgs/OccupancyGrid`    | Static map used for collision avoidance and routing.            |
 | Input  | `/vehicle_state`       | `std_msgs/UInt8`            | Trigger signal from decision unit to start path planning.       |
 | Input  | `/parking_coordinates` | `geometry_msgs/PoseStamped` | Nearest available parking spot to plan toward.                  |
 | Output | `/path_data`           | `nav_msgs/Path`             | Computed path as a list of waypoints for the controller to use. |
@@ -111,7 +110,7 @@ Now create dummy publisher by pasting this each in new terminal.
 
 2. **Publish Odometry Input**
    ```bash
-   ros2 topic pub /odom nav_msgs/Odometry '{pose: {pose: {position: {x: 0.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}}'
+   ros2 topic pub /odom nav_msgs/Odometry '{pose: {pose: {position: {x: 1.0, y: 1.0, z: 0.0}, orientation: {w: 1.0}}}}'
    ```
 3. **Publish Goal Input**
    ```bash
@@ -121,33 +120,11 @@ Now create dummy publisher by pasting this each in new terminal.
    ```bash
    ros2 topic pub /vehicle_state std_msgs/UInt8 'data: 1'
    ```
-5. **Publish Odometry Input**
-   ```bash
-   ros2 topic pub /static_map nav_msgs/OccupancyGrid "header:
-     frame_id: 'map'
-   info:
-     resolution: 0.1
-     width: 10
-     height: 10
-     origin:
-       position: {x: 0.0, y: 0.0, z: 0.0}
-       orientation: {w: 1.0}
-   data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 100, 100, 100, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-       ```
-6. **Publish Parking Coordinates**
+5. **Publish Parking Coordinates**
    ```bash
    ros2 topic pub /parking_coordinates geometry_msgs/PoseStamped '{header: {frame_id: "map"}, pose: {position: {x: 2.0, y: 2.0}, orientation: {w: 1.0}}}'
    ```
-7. **Verify Output Path**
+6. **Verify Output Path**
    ```bash
    ros2 topic echo /path_data
    ```
