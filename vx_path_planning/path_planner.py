@@ -22,7 +22,7 @@ GO_TO_PARKING = 5
 
 class PathPlannerNode(Node):
     def __init__(self):
-        super().__init__('path_planner_node')  # Initialize node name
+        super().__init__('vx_path_planning')  # Initialize node name
 
         # Publisher to output the planned path
         self.path_pub = self.create_publisher(Path, '/path_data', 10)
