@@ -1,0 +1,9 @@
+************* Module vx_path_planning.path_planner
+path_planner.py:23:0: R0902: Too many instance attributes (11/7) (too-many-instance-attributes)
+path_planner.py:85:4: R0914: Too many local variables (28/15) (too-many-locals)
+path_planner.py:245:4: R0914: Too many local variables (17/15) (too-many-locals)
+path_planner.py:410:4: R0914: Too many local variables (27/15) (too-many-locals)
+path_planner.py:23:0: R0904: Too many public methods (23/20) (too-many-public-methods)
+
+------------------------------------------------------------------
+Your code has been rated at 9.85/10 (previous run: 9.82/10, +0.03)
