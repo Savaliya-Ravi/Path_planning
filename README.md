@@ -1,5 +1,4 @@
-[Ravikumar Shivlal Savaliya](https://git.hs-coburg.de/ravisavaliya) : Path Planning Node
-
+### Author: Ravikumar Savaliya
 
 ## 📌 Table of Contents
 - [Overview](#-overview)
@@ -62,26 +61,6 @@ geometry_msgs/PoseStamped droppoff
 
 --------------------
 
-## User Story M5 
-**US 1.4:** As a path planner component, I want to implement a `heading-constrained A*` path planning algorithm So that I can compute a feasible shortest path from the vehicle’s start pose to a goal pose.
-
-
-### Acceptance Criteria
-
-- A.C. 1.4.1 The component shall subscribe to `/odom`, `/vehicle_state`, `/pickup_drop_goal` and `/parking_coordinates` before attempting any planning. 
-- A.C. 1.4.2 The component shall load the graph YAML into `NODES` and `EDGES` at initialization and log success or failure. 
-- A.C. 1.4.3 The component shall set bumper node as a start node when state changes to plan the path from the bumper.
-- A.C. 1.4.4 The component shall compute the first `k` nearest graph node for given start and goal poses using Euclidean distance and return node IDs. 
-- A.C. 1.4.5 If the angle between current vehicle heading and vector to nearest start node exceeds `65` degrees, the component shall select the second-nearest node as start.
-- A.C. 1.4.6 The component shall run `a_star_with_heading` using mapped node IDs, where `state` tracks `(node_id, heading_angle)` and neighbors expand only within a 65-degree cone of current heading, returning an ordered, cost-optimal path with `f = g + h`. 
-- A.C. 1.4.7 For paths with 2+ nodes, if the final two nodes form >65-degree turn to goal then remove the last node and always append goal as final waypoint.
-- A.C. 1.4.8 The component shall convert A* node IDs to PoseStamped messages, compute yaw orientations between consecutive waypoints, set quaternion orientations, and publish a `nav_msgs/Path` on `/path_data` once per planning request.
-
-[User Story M4](https://miro.com/app/board/uXjVJfaT4fM=/?moveToWidget=3458764647498840535&cot=14), [User Story M3](https://miro.com/app/board/uXjVJfaT4fM=/?moveToWidget=3458764635063938499&cot=14)
-
----
-
-
 ## ⚙️ Component Functionalities
 
 The **Path Planning Node** starts planning only when it receives a trigger on the `/vehicle_state` topic.
@@ -142,10 +121,9 @@ Yaw orientations are computed between consecutive waypoints and set into orienta
 
 ## Dependencies
 
-1. [vx_localization](https://git.hs-coburg.de/voyagex/vx_localization)
-2. [vx_decision_unit](https://git.hs-coburg.de/voyagex/vx_decision_unit)
-3. [vx_path_planning](https://git.hs-coburg.de/voyagex/vx_path_planning)
-4. [vx_custom_msgs](https://git.hs-coburg.de/voyagex/vx_custom_msgs)
+1. Localization Node
+2. Decision Unit Node
+3. Custom Message Package
 
 
 
@@ -154,7 +132,7 @@ Yaw orientations are computed between consecutive waypoints and set into orienta
 ### 🔧 Clone the repository
 
 ```bash
-git clone https://git.hs-coburg.de/voyagex/vx_path_planning.git
+git clone https://github.com/Savaliya-Ravi/Path_planning.git
 ```
 
 ##  Build the package
@@ -198,6 +176,7 @@ This section outlines how to verify that the **Path Planning Node** correctly su
    ```bash
    ros2 topic pub /vehicle_state std_msgs/msg/Int8 "{data: 1}"
    ```
+   (Here data: 1 will generate path to pickup, data: 3 generates path to dropoff and data: 5 can generate path to parking) 
 
 4. **Publish Pickup and Dropoff Input**
    ```bash
